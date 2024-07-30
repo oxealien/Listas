@@ -1,0 +1,44 @@
+---
+title: "Tarifa Zero"
+author: "Aline Maria"
+date: "2024-07-30"
+output: slidy_presentation
+---
+
+```{r setup, include=FALSE}
+pacman::p_load("tidyverse", "readxl", "dplyr", "ggplot2")
+```
+
+Gráfico de estimativa intervalar das médias de competição política entre municípios que adotaram e que não adotaram Tarifa Zero no transporte público.
+
+```{r atribuindo banco de dados, message=FALSE, warning=FALSE, paged.print=FALSE}
+dados <- read_excel("~/Downloads/1º Semestre/3. Método Quantitativo/R/TZ_banco.xlsx")
+```
+
+
+``` {r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+summary_data <- dados %>%
+  group_by(adotatz) %>%
+  summarize(
+    mean_população = mean(POP, na.rm = TRUE),
+    ci_lower = mean(POP, na.rm = TRUE) - qt(0.975, df=n()-1)
+    * sd(POP, na.rm = TRUE)/sqrt(n()),
+    ci_upper = mean(POP, na.rm = TRUE) + qt(0.975, df=n()-1)
+    * sd(POP, na.rm = TRUE)/sqrt(n())
+  )
+```
+# Gerando o gráfico de estimativa intervalar
+
+
+```{r ggplot}
+ggplot(summary_data, aes(x = adotatz, y = mean_população)) +
+  geom_point() +
+  geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper), width = 0.2) +
+  labs(title = "Estimativas Intervalares da População de estados que Adotaram Tarifa Zero",
+       x = "Adoção Tarifa Zero",
+       y = "Média da População")
+```
+
+
+Hipótese: Os municípios que adotaram a tarifa zero não possuem um padrão populacional constante. São variados os portes de cidade.
+
