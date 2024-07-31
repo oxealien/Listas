@@ -27,8 +27,8 @@ summary_data <- dados %>%
     * sd(POP, na.rm = TRUE)/sqrt(n())
   )
 ```
-# Gerando o gráfico de estimativa intervalar
 
+# Gerando o gráfico de estimativa intervalar
 
 ```{r ggplot}
 ggplot(summary_data, aes(x = adotatz, y = mean_população)) +
