@@ -1,0 +1,40 @@
+---
+title: "Tarifa Zero"
+author: "Aline Maria"
+date: "2024-07-30"
+output: slidy_presentation
+---
+Gráfico de estimativa intervalar das médias do número efetivo de partidos de municípios que adotaram e que não adotaram Tarifa Zero (TZ) no transporte público.
+
+```{r setup, include=FALSE}
+pacman::p_load("tidyverse", "readxl", "dplyr", "ggplot2")
+```
+
+```{r atribuindo banco de dados, message=FALSE, warning=FALSE, paged.print=FALSE}
+dados <- read_excel("~/Downloads/1º Semestre/3. Método Quantitativo/R/TZ_banco.xlsx")
+```
+
+``` {r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+summary_data <- dados %>%
+  group_by(adotatz) %>%
+  summarize(
+    mean_partidos = mean(NEPm, na.rm = TRUE),
+    ci_lower = mean(NEPm, na.rm = TRUE) - qt(0.975, df=n()-1)
+    * sd(NEPm, na.rm = TRUE)/sqrt(n()),
+    ci_upper = mean(NEPm, na.rm = TRUE) + qt(0.975, df=n()-1)
+    * sd(NEPm, na.rm = TRUE)/sqrt(n())
+  )
+```
+
+```{r ggplot}
+ggplot(summary_data, aes(x = adotatz, y = mean_partidos)) +
+  geom_point() +
+  geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper), width = 0.2) +
+  labs(title = "Estimativas Intervalares do Número Efetivo de Partidos de munícipios que Adotaram Tarifa Zero",
+       x = "Adoção Tarifa Zero",
+       y = "Média de Partidos")
+```
+
+
+Hipótese: Quanto maior o número de partidos, maior a chance de adotar a TZ
+
